@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import type { ConfigType } from '@nestjs/config';
-import cloudinaryConfig from 'src/config/cloudinaryConfig';
+import cloudinaryConfig from 'src/cloudinary/config/cloudinaryConfig';
 import { Readable } from 'stream';
 
 export class CloudinaryProvider {
