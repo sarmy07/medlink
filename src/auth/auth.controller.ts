@@ -33,10 +33,12 @@ export class AuthController {
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Google login' })
   googleLogin() {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Google callback' })
   googleCallback(@Req() req) {
     // console.log('CALLBACK HIT');
     // console.log('USER:', req.user);
