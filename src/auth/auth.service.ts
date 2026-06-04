@@ -7,10 +7,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from './dtos/login.dto';
-import { UsersService } from 'src/users/users.service';
 import { HashingProvider } from './providers/hashing.provider';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dtos/register.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -68,6 +67,32 @@ export class AuthService {
     if (!isValid) throw new BadRequestException('invalid credentials');
 
     return await this.generateTokens(user);
+  }
+
+  async googleLogin(user: any) {
+    let existingUser = await this.userRepo.findOne({
+      where: {
+        email: user.email,
+      },
+    });
+    if (!existingUser) {
+      existingUser = await this.userRepo.save({
+        email: user.email,
+        firstname: user.firstName,
+        lastname: user.lastName,
+        avatar: user.avatar,
+        googleId: user.googleId,
+        role: UserRole.PATIENT,
+      });
+    }
+
+    const tokens = await this.generateTokens(existingUser);
+
+    const { password, refreshToken, ...safeUser } = existingUser;
+    return {
+      tokens,
+      user: safeUser,
+    };
   }
 
   async refresh(userId: string, dto: RefreshTokenDto) {

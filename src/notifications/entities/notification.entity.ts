@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -23,7 +24,11 @@ export class Notification {
   id: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   recipient: User;
+
+  @Column()
+  userId: string;
 
   @Column({ type: 'enum', enum: NotificationType })
   type: NotificationType;

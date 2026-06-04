@@ -12,6 +12,8 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { MedicalRecordsModule } from './medical-records/medical-records.module';
 import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import authConfig from './auth/config/auth.config';
+import googleConfig from './auth/config/google.config';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: validationSchema,
+      load: [authConfig, googleConfig],
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
