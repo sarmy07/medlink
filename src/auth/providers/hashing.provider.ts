@@ -1,3 +1,6 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export abstract class HashingProvider {
   abstract hash(password: string): Promise<string>;
 

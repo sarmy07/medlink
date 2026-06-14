@@ -111,8 +111,32 @@ export class MedicalRecordsService {
     });
   }
 
-  findAll() {
-    return `This action returns all medicalRecords`;
+  async findAll(query: any) {
+    const queryBuilder = this.recordRepo
+      .createQueryBuilder('medical_records')
+      .leftJoinAndSelect('medical_records.doctor', 'doctor')
+      .leftJoinAndSelect('medical_records.patient', 'patient')
+      .leftJoinAndSelect('medical_records.appointment', 'appointment');
+
+    if (query.doctorId) {
+      queryBuilder.andWhere('doctor.id = :doctorId', {
+        doctorId: query.doctorId,
+      });
+    }
+
+    if (query.patientId) {
+      queryBuilder.andWhere('patient.id = :patientId', {
+        patientId: query.patientId,
+      });
+    }
+
+    if (query.appointment) {
+      queryBuilder.andWhere('appointment.id = :appointmentId', {
+        appointmentId: query.appointment,
+      });
+    }
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string, user: User) {

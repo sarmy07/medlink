@@ -87,8 +87,50 @@ export class PrescriptionsService {
     });
   }
 
-  findAll() {
-    return `This action returns all prescriptions`;
+  async findAllPrescriptionActiveStatus(query: any) {
+    const QueryBuilder = this.repo
+      .createQueryBuilder('prescriptions')
+      .leftJoinAndSelect('prescriptions.doctor', 'doctor')
+      .leftJoinAndSelect('prescriptions.patient', 'patient')
+      .where('prescription.status = :status', {
+        status: query.status,
+      });
+
+    return await QueryBuilder.getMany();
+  }
+
+  async findAllPrescription(query: any) {
+    const queryBuilder = this.repo
+      .createQueryBuilder('prescriptions')
+      .leftJoinAndSelect('prescriptions.patient', 'patient');
+
+    if (query.status) {
+      queryBuilder.andWhere('prescriptions.status = :status', {
+        status: query.status,
+      });
+    }
+
+    if (query.patientId) {
+      queryBuilder.andWhere('patientId = :patientId', {
+        patientId: query.patientId,
+      });
+    }
+
+    return queryBuilder.getMany();
+  }
+
+  async prescriptionByPatientName(query: any) {
+    const queryBuilder = this.repo
+      .createQueryBuilder('prescriptions')
+      .leftJoinAndSelect('prescriptions.patient', 'patient')
+      .andWhere(
+        '(patient.firstname ILIKE :search OR patinet.lastname ILIKE :search)',
+        {
+          search: `$%{query.search}`,
+        },
+      );
+
+    return queryBuilder.getOne();
   }
 
   async findOne(id: string, user: User) {
